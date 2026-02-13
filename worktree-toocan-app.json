@@ -1,0 +1,56 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$comment": "Worktree configuration for toocan-app. Copy to toocan-app/.claude/worktree.json or reference from worktree-manager.",
+
+  "project": "toocan-app",
+
+  "ports": {
+    "count": 2,
+    "services": ["client", "server"]
+  },
+
+  "env": {
+    "CLIENT_PORT": "{{PORT_0}}",
+    "SERVER_PORT": "{{PORT_1}}"
+  },
+
+  "install": "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} docker compose run --rm client pnpm install",
+
+  "startServices": {
+    "command": "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} CLIENT_PORT={{PORT_0}} SERVER_PORT={{PORT_1}} docker compose up -d",
+    "note": "Ports are injected from worktree registry allocation"
+  },
+
+  "stopServices": {
+    "command": "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} docker compose down"
+  },
+
+  "validate": {
+    "start": "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} CLIENT_PORT={{PORT_0}} SERVER_PORT={{PORT_1}} docker compose up -d",
+    "healthCheck": "curl -sf http://localhost:{{PORT_1}}/health",
+    "healthCheckTimeout": 60,
+    "stop": "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} docker compose down"
+  },
+
+  "copyDirs": [".env.example"],
+
+  "cleanup": {
+    "preCleanup": [
+      "COMPOSE_PROJECT_NAME=qz-{{BRANCH_SLUG}} docker compose down --volumes --remove-orphans"
+    ],
+    "note": "Stops containers, removes volumes and orphan containers for this worktree's compose project"
+  },
+
+  "placeholders": {
+    "{{BRANCH_SLUG}}": "Worktree branch slug (e.g., isabelle-feature-auth)",
+    "{{PORT_0}}": "First allocated port from registry (client)",
+    "{{PORT_1}}": "Second allocated port from registry (server)",
+    "{{PORT}}": "Alias for {{PORT_0}} (primary port)"
+  },
+
+  "notes": [
+    "Ports are dynamically allocated from worktree-registry.json (8100-8199 pool)",
+    "Each worktree gets unique ports, so no collisions between concurrent worktrees",
+    "COMPOSE_PROJECT_NAME isolates Docker resources per worktree"
+  ]
+}

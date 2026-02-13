@@ -1,0 +1,10 @@
+{
+  "version": 2,
+  "name": "memory-profiling",
+  "owner": "greyhaven-ai",
+  "repo": "claude-code-config",
+  "path": "grey-haven-plugins/observability/skills/memory-profiling",
+  "branch": "main",
+  "sha": "5c663c449edae6b3e37beb625a6c66c79758e44d",
+  "source": "manual"
+}

@@ -1,0 +1,31 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm check:*)",
+      "Bash(find:*)",
+      "Bash(pnpm github-checks:*)",
+      "Bash(gh pr view:*)",
+      "Bash(gh api:*)",
+      "Bash(ls:*)",
+      "WebFetch(domain:github.com)",
+      "WebFetch(domain:docs.daily.co)",
+      "WebFetch(domain:raw.githubusercontent.com)",
+      "Bash(uv run pytest:*)",
+      "Bash(git fetch:*)",
+      "Bash(ruff check:*)",
+      "Bash(ruff format:*)",
+      "Read(*)",
+      "Edit(path:/Users/isabelleredactive/.claude/*)",
+      "Write(path:/Users/isabelleredactive/.claude/*)",
+      "Edit(path:/Users/isabelleredactive/tmp/worktrees/toocan-app/*)",
+      "Write(path:/Users/isabelleredactive/tmp/worktrees/toocan-app/*)",
+      "Edit(path:/Users/isabelleredactive/src/toocan-app/*)",
+      "Write(path:/Users/isabelleredactive/src/toocan-app/*)"
+    ]
+  },
+  "model": "haiku",
+  "statusLine": {
+    "type": "command",
+    "command": "/Users/isabelleredactive/.claude/statusline-command.sh"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "owner": "wirasm",
+  "repo": "worktree-manager-skill",
+  "path": ".claude/skills",
+  "branch": "main",
+  "sha": "7a2e33f85189f2c37fffc2c99f62d389ed9d2cdf"
+}

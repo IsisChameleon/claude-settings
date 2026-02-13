@@ -1,0 +1,23 @@
+# Runtime / session data
+history.jsonl
+projects/
+debug/
+file-history/
+shell-snapshots/
+todos/
+tasks/
+plans/
+memory/
+paste-cache/
+ide/
+
+# Cache and stats
+cache/
+stats-cache.json
+statsig/
+
+# Runtime registry (machine-specific paths)
+worktree-registry.json
+
+# Cloned plugin marketplaces (like node_modules)
+plugins/marketplaces/
