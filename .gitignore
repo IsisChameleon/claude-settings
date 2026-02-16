@@ -21,3 +21,12 @@ worktree-registry.json
 
 # Cloned plugin marketplaces (like node_modules)
 plugins/marketplaces/
+
+# Plugin caches and local state
+plugins/install-counts-cache.json
+plugins/installed_plugins.json
+plugins/cache/
+
+# Logs and caches
+*.log
+image-cache/

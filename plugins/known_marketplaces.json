@@ -5,6 +5,14 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-02-13T06:32:55.148Z"
+    "lastUpdated": "2026-02-16T22:13:29.587Z"
+  },
+  "pipecat-skills": {
+    "source": {
+      "source": "github",
+      "repo": "pipecat-ai/skills"
+    },
+    "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/pipecat-skills",
+    "lastUpdated": "2026-02-16T01:19:45.297Z"
   }
 }

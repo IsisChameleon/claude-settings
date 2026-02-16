@@ -144,14 +144,34 @@ case "$TERMINAL" in
             echo "Error: Ghostty not found"
             exit 1
         fi
-        # Launch Ghostty with background color and title
-        GHOSTTY_ARGS=(-e "$SHELL_CMD" -c "$INNER_CMD")
+
+        # Use a wrapper script to avoid quoting issues through
+        # open -> Ghostty -> /usr/bin/login -> shell chain
+        LAUNCH_SCRIPT=$(mktemp /tmp/wt-launch-XXXXXX.sh)
+        cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
+#!/usr/bin/env $SHELL_CMD
+# Auto-generated worktree launcher - self-deleting
+unset CLAUDECODE
+cd '$WORKTREE_PATH'
+$(if [ -n "$TASK" ]; then
+    echo "$CLAUDE_CMD \"$TASK\""
+else
+    echo "$CLAUDE_CMD"
+fi)
+rm -f '$LAUNCH_SCRIPT'
+WRAPPER_EOF
+        chmod +x "$LAUNCH_SCRIPT"
+
+        # Build Ghostty arguments
+        GHOSTTY_ARGS=()
         if [ -n "$WORKTREE_BG" ]; then
             GHOSTTY_ARGS+=(--background="$WORKTREE_BG")
         fi
         if [ -n "$TAB_TITLE" ]; then
             GHOSTTY_ARGS+=(--title="$TAB_TITLE")
         fi
+        GHOSTTY_ARGS+=(-e "$LAUNCH_SCRIPT")
+
         open -na "Ghostty.app" --args "${GHOSTTY_ARGS[@]}"
         ;;
 
