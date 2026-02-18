@@ -56,6 +56,10 @@ if (!error) {
 ## Searching Past Conversations
 - Claude Code stores conversation history in `~/.claude/`. The main transcript log is `history.jsonl`, and per-project session transcripts (JSONL files) live under `projects/<encoded-project-path>/`. You can grep these files to find past conversations, tool calls, code snippets, or decisions from previous sessions.
 
+## Plan Mode
+
+When creating a plan, name the markdown file descriptively based on the task (e.g., `add-user-auth.md`, `fix-login-bug.md`, `refactor-api-routes.md`) instead of using a random generated name.
+
 ## MCP Servers
 When adding MCP servers, mention `--scope user` for global availability.
 
