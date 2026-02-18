@@ -1,6 +1,7 @@
 {
   "terminal": "ghostty",
   "shell": "zsh",
+  "nodeVersion": null,
   "claudeCommand": "claude",
   "portPool": {
     "start": 8100,

@@ -1,27 +1,14 @@
 # Worktree Manager Skill Notes
 
-This file contains notes specific to the worktree manager skill execution.
+## Configuration
 
-## Agent Launching
+All local settings (worktree base path, terminal, shell, node version) are defined in the user's local config file. **Always read config before any operation. Never assume paths or settings.**
 
-When launching agents in Ghostty, use zsh (not fish):
+**Config resolution order (local overrides defaults):**
+1. `~/.claude/worktree-local.json` (per-user overrides)
+2. `config.defaults.json` in this skill directory (shared defaults)
 
-```bash
-open -na "Ghostty.app" --args -e zsh -c "cd '$WORKTREE_PATH' && exec claude"
-```
-
-## Dependency Installation
-
-Before running `pnpm install`, ensure correct Node version:
-
-```bash
-nvm use 24.13.0
-```
-
-## Worktree Storage
-
-- **Base path**: `~/tmp/worktrees/<project>/<branch-slug>/`
-- **Registry**: `~/.claude/worktree-registry.json`
+Merge: local values take precedence. Missing local keys fall back to defaults.
 
 ## Visual Differentiation
 
@@ -29,7 +16,7 @@ Each worktree gets automatic visual styling:
 
 - **Color assignment**: yellow, red, green, blue, purple (cycles)
 - **Index number**: [1], [2], [3], etc.
-- **Ghostty background tint**: Dark tinted background based on color
+- **Terminal background tint**: Dark tinted background based on color
 - **Tab title**: Shows `[N] branch-name` (e.g., "[1] isabelle/fix-agent")
 - **Shell prompt**: Colored prompt prefix with index number
 

@@ -10,7 +10,9 @@
       "WebFetch(domain:mcpservers.org)",
       "Bash(npm run build:*)",
       "Bash(echo:*)",
-      "Bash(HOST=0.0.0.0 PORT=3000 npm run canvas:*)"
+      "Bash(HOST=0.0.0.0 PORT=3000 npm run canvas:*)",
+      "Bash(git worktree remove:*)",
+      "Bash(git worktree:*)"
     ]
   }
 }

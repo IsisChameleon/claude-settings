@@ -220,9 +220,37 @@ EOF
         alacritty --working-directory "$WORKTREE_PATH" -e "$SHELL_CMD" -c "$INNER_CMD" &
         ;;
 
+    tabby)
+        if ! command -v tabby &> /dev/null; then
+            echo "Error: Tabby CLI not found in PATH"
+            echo "Enable the CLI by symlinking the Tabby binary:"
+            echo "  sudo ln -s /Applications/Tabby.app/Contents/MacOS/Tabby /usr/local/bin/tabby"
+            echo "Then verify with: tabby --version"
+            exit 1
+        fi
+
+        # Use a wrapper script to avoid quoting issues (same approach as Ghostty)
+        LAUNCH_SCRIPT=$(mktemp /tmp/wt-launch-XXXXXX.sh)
+        cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
+#!/usr/bin/env $SHELL_CMD
+# Auto-generated worktree launcher - self-deleting
+unset CLAUDECODE
+cd '$WORKTREE_PATH'
+$(if [ -n "$TASK" ]; then
+    echo "$CLAUDE_CMD \"$TASK\""
+else
+    echo "$CLAUDE_CMD"
+fi)
+rm -f '$LAUNCH_SCRIPT'
+WRAPPER_EOF
+        chmod +x "$LAUNCH_SCRIPT"
+
+        tabby run "$LAUNCH_SCRIPT" &
+        ;;
+
     *)
         echo "Error: Unknown terminal type: $TERMINAL"
-        echo "Supported: ghostty, iterm2, tmux, wezterm, kitty, alacritty"
+        echo "Supported: ghostty, iterm2, tmux, wezterm, kitty, alacritty, tabby"
         exit 1
         ;;
 esac

@@ -1,0 +1,7 @@
+{
+  "terminal": "tabby",
+  "shell": "zsh",
+  "nodeVersion": "24.13.0",
+  "worktreeBase": "~/tmp/worktrees",
+  "claudeCommand": "claude"
+}
