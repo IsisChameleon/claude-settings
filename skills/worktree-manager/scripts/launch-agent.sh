@@ -1,5 +1,5 @@
 #!/bin/bash
-# launch-agent.sh - Launch Claude Code in a new Ghostty terminal for a worktree
+# launch-agent.sh - Launch Claude Code in a new terminal for a worktree
 #
 # Usage: ./launch-agent.sh <worktree-path> [task-description]
 #
@@ -21,23 +21,22 @@ fi
 
 # Find script directory and config
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-CONFIG_FILE="$SCRIPT_DIR/../config.json"
 REGISTRY="${HOME}/.claude/worktree-registry.json"
 
-# Load config (with defaults)
-if [ -f "$CONFIG_FILE" ] && command -v jq &> /dev/null; then
-    TERMINAL=$(jq -r '.terminal // "ghostty"' "$CONFIG_FILE")
-    SHELL_CMD=$(jq -r '.shell // "fish"' "$CONFIG_FILE")
-    CLAUDE_CMD=$(jq -r '.claudeCommand // "cc"' "$CONFIG_FILE")
+# Load config: merge defaults with user-local overrides
+# User-local config (~/.claude/worktree-local.json) takes precedence over defaults
+if command -v jq &> /dev/null; then
+    DEFAULT_CONFIG=$(cat "$SCRIPT_DIR/../config.defaults.json" 2>/dev/null || echo '{}')
+    LOCAL_CONFIG=$(cat "${HOME}/.claude/worktree-local.json" 2>/dev/null || echo '{}')
+    CONFIG=$(printf '%s\n%s' "$DEFAULT_CONFIG" "$LOCAL_CONFIG" | jq -s '.[0] * .[1]')
+    TERMINAL=$(echo "$CONFIG" | jq -r '.terminal // "ghostty"')
+    SHELL_CMD=$(echo "$CONFIG" | jq -r '.shell // "zsh"')
+    CLAUDE_CMD=$(echo "$CONFIG" | jq -r '.claudeCommand // "claude"')
 else
     TERMINAL="ghostty"
-    SHELL_CMD="fish"
-    CLAUDE_CMD="cc"
+    SHELL_CMD="zsh"
+    CLAUDE_CMD="claude"
 fi
-
-# Note: CLAUDE_CMD (default "cc") is configurable in config.json
-# It runs inside the target shell (fish) which should have the alias defined
-# Falls back to "claude" if the alias/command fails
 
 # Expand ~ in path
 WORKTREE_PATH="${WORKTREE_PATH/#\~/$HOME}"
@@ -147,7 +146,8 @@ case "$TERMINAL" in
 
         # Use a wrapper script to avoid quoting issues through
         # open -> Ghostty -> /usr/bin/login -> shell chain
-        LAUNCH_SCRIPT=$(mktemp /tmp/wt-launch-XXXXXX.sh)
+        LAUNCH_SCRIPT="/tmp/wt-launch-$$.sh"
+        rm -f "$LAUNCH_SCRIPT"
         cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
 #!/usr/bin/env $SHELL_CMD
 # Auto-generated worktree launcher - self-deleting
@@ -230,7 +230,8 @@ EOF
         fi
 
         # Use a wrapper script to avoid quoting issues (same approach as Ghostty)
-        LAUNCH_SCRIPT=$(mktemp /tmp/wt-launch-XXXXXX.sh)
+        LAUNCH_SCRIPT="/tmp/wt-launch-$$.sh"
+        rm -f "$LAUNCH_SCRIPT"
         cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
 #!/usr/bin/env $SHELL_CMD
 # Auto-generated worktree launcher - self-deleting

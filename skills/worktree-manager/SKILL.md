@@ -352,14 +352,25 @@ For EACH branch (can run in parallel):
         COMPOSE_PROJECT_NAME=null
       fi
 
+1.5. PRE-FLIGHT CHECK — branch conflict
+   **Do this BEFORE allocating ports or creating any directories.**
+   Git disallows checking out the same branch in two worktrees simultaneously.
+   Check whether the branch is already checked out somewhere:
+      git worktree list | grep "$BRANCH"
+   If it IS checked out (including the main repo):
+   - Tell the user which worktree/path has it checked out
+   - Ask them to resolve it (switch that worktree to another branch) before continuing
+   - Do NOT allocate ports or create directories until this is resolved
+   This avoids orphaned port allocations that need manual rollback.
+
 2. ALLOCATE PORTS
    Option A (script): ~/.claude/skills/worktree-manager/scripts/allocate-ports.sh 2
    Option B (manual): Find $PORTS_PER_WT unused ports from $PORT_START-$PORT_END, add to registry
 
 3. CREATE WORKTREE
    mkdir -p $WORKTREE_BASE/$PROJECT
-   git worktree add $WORKTREE_PATH -b $BRANCH
-   # If branch exists already, omit -b flag
+   git worktree add $WORKTREE_PATH $BRANCH
+   # Note: omit -b flag when the branch already exists locally
 
 4. COPY UNCOMMITTED RESOURCES
    cp -r .agents $WORKTREE_PATH/ 2>/dev/null || true
