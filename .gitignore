@@ -30,3 +30,15 @@ plugins/cache/
 # Logs and caches
 *.log
 image-cache/
+
+# macOS metadata
+.DS_Store
+
+# Local backups
+backups/
+
+# MCP auth cache
+mcp-needs-auth-cache.json
+
+# Plugin blocklist (fetched at runtime)
+plugins/blocklist.json

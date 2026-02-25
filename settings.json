@@ -67,9 +67,22 @@
       "mcp__claude_ai_Linear__get_status_updates",
       "mcp__claude_ai_Linear__get_attachment",
       "mcp__claude_ai_Linear__extract_images",
-      "mcp__claude_ai_Linear__search_documentation"
+      "mcp__claude_ai_Linear__search_documentation",
+      "Bash(pbcopy:*)",
+      "Bash(gh pr create:*)",
+      "Read(//Users/isabelleredactive/.claude/**)",
+      "Read(//Users/isabelleredactive/src/toocan-app/.claude/**)",
+      "Bash(gh pr diff:*)",
+      "Bash(uv run:*)",
+      "Read(//Users/isabelleredactive/src/pipecat-mcp-server/**)",
+      "Read(//Users/isabelleredactive/src/pipecat/src/**)",
+      "Bash(git push:*)"
+    ],
+    "additionalDirectories": [
+      "/Users/isabelleredactive/.claude/plans"
     ]
   },
+  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "/Users/isabelleredactive/.claude/statusline-command.sh"

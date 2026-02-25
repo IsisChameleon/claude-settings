@@ -1,6 +1,6 @@
 ---
 name: worktree-manager
-description: Create, manage, and cleanup git worktrees with Claude Code agents across all projects. USE THIS SKILL when user says "create worktree", "spin up worktrees", "new worktree for X", "worktree status", "cleanup worktrees", "sync worktrees", or wants parallel development branches. Also use when creating PRs from a worktree branch (to update registry with PR number). Handles worktree creation, dependency installation, validation, agent launching in Ghostty, and global registry management.
+description: Create, manage, and cleanup git worktrees with Claude Code agents across all projects. USE THIS SKILL when user says "create worktree", "spin up worktrees", "new worktree for X", "worktree status", "cleanup worktrees", "sync worktrees", "start dev stack", "stop dev stack", "dev stack command", or wants parallel development branches. Also use when creating PRs from a worktree branch (to update registry with PR number). Handles worktree creation, dependency installation, validation, agent launching, dev stack start/stop, and global registry management.
 allowed-tools: Bash(git worktree:*), Bash(git rev-parse:*), Bash(docker compose:*), Bash(mkdir:*), Bash(cp:*), Bash(curl:*), Bash(sleep:*), Bash(lsof:*), Bash(~/.claude/skills/worktree-manager/scripts/*), Bash(open:*), Bash(uuidgen:*), Bash(jq:*), Bash(cat:*)
 ---
 
@@ -73,6 +73,7 @@ PORTS_PER_WT=$(echo "$CONFIG" | jq -r '.portsPerWorktree')
 - "create PR" (when in a worktree - updates registry with PR number)
 - "audit worktree settings" / "what Claude data is in this worktree?"
 - "check Claude config for worktree X"
+- "start dev stack" / "give me the dev stack command" / "stop dev stack"
 
 ---
 
@@ -613,7 +614,37 @@ In-worktree:
 - **Custom skills/commands**: Move to main repo / global skills / discard?
 - **Session transcripts**: Keep for reference / discard?
 
-### 7. Sync Registry
+### 7. Start/Stop Dev Stack for a Worktree
+
+**User says:** "start dev stack", "give me the dev stack command", "stop dev stack"
+
+**CRITICAL**: Always read `.claude/worktree.json` from the project repo to get the correct command template. Never guess env vars or port mappings — they are project-specific.
+
+**You do:**
+
+```bash
+# 1. Determine which worktree we're in (use cwd or ask user)
+WORKTREE_PATH=$(git rev-parse --show-toplevel)
+BRANCH=$(git branch --show-current)
+
+# 2. Read the project's worktree.json for the command template
+cat "$WORKTREE_PATH/.claude/worktree.json" | jq -r '.startServices.command'
+# This gives you the template with placeholders like {{BRANCH_SLUG}}, {{PORT_0}}, {{PORT_1}}
+
+# 3. Look up the worktree in the registry to get allocated ports and branch slug
+cat ~/.claude/worktree-registry.json | jq ".worktrees[] | select(.branch == \"$BRANCH\")"
+
+# 4. Substitute placeholders with actual values from registry:
+#    {{BRANCH_SLUG}} → registry .branchSlug
+#    {{PORT_0}}      → registry .ports[0]
+#    {{PORT_1}}      → registry .ports[1]
+
+# 5. Give the user the fully resolved command (or run it if asked)
+```
+
+For **stopping**, use `.stopServices.command` from the same `worktree.json`, substituting the same placeholders.
+
+### 8. Sync Registry
 
 Reconcile registry with actual worktrees and PR status:
 
