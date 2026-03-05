@@ -151,6 +151,7 @@ case "$TERMINAL" in
         cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
 #!/usr/bin/env $SHELL_CMD
 # Auto-generated worktree launcher - self-deleting
+source ~/.zprofile 2>/dev/null; source ~/.zshrc 2>/dev/null; true
 unset CLAUDECODE
 cd '$WORKTREE_PATH'
 $(if [ -n "$TASK" ]; then
@@ -235,6 +236,7 @@ EOF
         cat > "$LAUNCH_SCRIPT" << WRAPPER_EOF
 #!/usr/bin/env $SHELL_CMD
 # Auto-generated worktree launcher - self-deleting
+source ~/.zprofile 2>/dev/null; source ~/.zshrc 2>/dev/null; true
 unset CLAUDECODE
 cd '$WORKTREE_PATH'
 $(if [ -n "$TASK" ]; then

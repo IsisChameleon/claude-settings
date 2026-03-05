@@ -76,10 +76,21 @@
       "Bash(uv run:*)",
       "Read(//Users/isabelleredactive/src/pipecat-mcp-server/**)",
       "Read(//Users/isabelleredactive/src/pipecat/src/**)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(python:*)",
+      "Bash(gcloud config get-value project)",
+      "Skill(analyse-conversation)",
+      "Skill(analyse-conversation:*)",
+      "Read(//private/tmp/**)",
+      "Bash(python3 -c \":*)",
+      "Bash(python3 parse_gcp_logs.py '121a29953a1f')",
+      "Bash(python3 -c \"import json; d=json.load\\(open\\(''/tmp/analyse-conv-parsed2.json''\\)\\); print\\(d[''end_reason'']\\)\")",
+      "Bash(python3 generate_report.py /tmp/analyse-conv-enriched.json /tmp/analyse-conv-metrics.json --env staging)"
     ],
     "additionalDirectories": [
-      "/Users/isabelleredactive/.claude/plans"
+      "/Users/isabelleredactive/.claude/plans",
+      "/Users/isabelleredactive/.claude/skills/analyse-conversation",
+      "/Users/isabelleredactive/src/toocan-app/.claude/skills"
     ]
   },
   "model": "sonnet",
@@ -88,7 +99,17 @@
     "command": "/Users/isabelleredactive/.claude/statusline-command.sh"
   },
   "enabledPlugins": {
-    "pipecat-mcp-server@pipecat-skills": true
+    "pipecat-mcp-server@pipecat-skills": true,
+    "pipecat@pipecat-skills": true,
+    "notion-workspace-plugin@notion-plugin-marketplace": true
+  },
+  "extraKnownMarketplaces": {
+    "pipecat-skills": {
+      "source": {
+        "source": "github",
+        "repo": "pipecat-ai/skills"
+      }
+    }
   },
   "effortLevel": "medium"
 }

@@ -12,7 +12,10 @@
       "Bash(echo:*)",
       "Bash(HOST=0.0.0.0 PORT=3000 npm run canvas:*)",
       "Bash(git worktree remove:*)",
-      "Bash(git worktree:*)"
+      "Bash(git worktree:*)",
+      "mcp__notion__notion-fetch",
+      "mcp__notion__notion-query-database-view",
+      "Bash(gcloud logging:*)"
     ]
   }
 }

@@ -42,3 +42,4 @@ mcp-needs-auth-cache.json
 
 # Plugin blocklist (fetched at runtime)
 plugins/blocklist.json
+telemetry/**/*
