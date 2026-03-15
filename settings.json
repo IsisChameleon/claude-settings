@@ -93,7 +93,6 @@
       "/Users/isabelleredactive/src/toocan-app/.claude/skills"
     ]
   },
-  "model": "sonnet",
   "statusLine": {
     "type": "command",
     "command": "/Users/isabelleredactive/.claude/statusline-command.sh"
@@ -101,7 +100,11 @@
   "enabledPlugins": {
     "pipecat-mcp-server@pipecat-skills": true,
     "pipecat@pipecat-skills": true,
-    "notion-workspace-plugin@notion-plugin-marketplace": true
+    "notion-workspace-plugin@notion-plugin-marketplace": true,
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "claude-md-management@claude-plugins-official": true,
+    "slack@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "pipecat-skills": {
@@ -109,7 +112,12 @@
         "source": "github",
         "repo": "pipecat-ai/skills"
       }
+    },
+    "claude-code-plugins": {
+      "source": {
+        "source": "github",
+        "repo": "anthropics/claude-code"
+      }
     }
-  },
-  "effortLevel": "medium"
+  }
 }

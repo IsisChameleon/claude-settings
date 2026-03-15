@@ -5,7 +5,7 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-03-05T02:32:00.909Z"
+    "lastUpdated": "2026-03-15T04:56:51.151Z"
   },
   "pipecat-skills": {
     "source": {
@@ -22,5 +22,13 @@
     },
     "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/notion-plugin-marketplace",
     "lastUpdated": "2026-03-03T03:56:45.248Z"
+  },
+  "claude-code-plugins": {
+    "source": {
+      "source": "github",
+      "repo": "anthropics/claude-code"
+    },
+    "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/claude-code-plugins",
+    "lastUpdated": "2026-03-13T08:58:37.629Z"
   }
 }

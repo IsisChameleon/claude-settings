@@ -34,6 +34,11 @@ image-cache/
 # macOS metadata
 .DS_Store
 
+# Local machine-specific config
+settings.local.json
+.skill-lock.json
+temp.txt
+
 # Local backups
 backups/
 
