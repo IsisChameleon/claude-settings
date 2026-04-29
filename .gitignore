@@ -10,6 +10,12 @@ plans/
 memory/
 paste-cache/
 ide/
+session-env/
+sessions/
+
+# Machine-specific plugin state
+vercel-plugin-device-id
+vercel-plugin-telemetry-preference
 
 # Cache and stats
 cache/

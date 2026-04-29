@@ -63,6 +63,24 @@ When creating a plan, name the markdown file descriptively based on the task (e.
 ## MCP Servers
 When adding MCP servers, mention `--scope user` for global availability.
 
+## Credential Isolation — HARD RULE
+
+**Never cross-share API keys, tokens, or any credentials between repos.**
+
+When working on a task for a specific repo, only use credentials from that repo's own `.env` / config files. If a credential is missing, broken, out of credits, expired, or otherwise failing:
+
+1. **STOP.** Tell the user the credential failed and wait for them to fix it.
+2. **Never** search other directories, other repos, or `~/src/*` for a substitute key.
+3. **Never** "fall back" to a working key from another project, even if it would unblock the task.
+
+Other repos may be referenced for **code patterns and information only** — read source files freely to understand patterns, but do not read or use `.env`, `secrets/`, service-account JSON, or any credential files from those repos.
+
+**Why this matters:** Different repos belong to different contexts — work vs personal, different clients, different billing owners. Using a work API key for a personal project (or vice versa) mis-attributes spend, can violate employer policy, and can leak personal activity into work logs. For example: `~/src/toocan-app/` is a work project; `~/tmp/worktrees/readme/` and similar personal projects must NEVER share its credentials.
+
+**When dispatching subagents:** explicitly instruct them in the brief to only load credentials from the current repo's own config. If the key fails, the subagent must stop and report — not auto-fallback.
+
+This rule applies to: API keys, OAuth tokens, service-account JSON, database URLs with embedded passwords, webhook secrets, JWT signing keys, and any other form of credential.
+
 ## Quality Checks
 
 Always run quality checks before committing:
