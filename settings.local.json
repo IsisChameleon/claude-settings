@@ -10,12 +10,14 @@
       "WebFetch(domain:mcpservers.org)",
       "Bash(npm run build:*)",
       "Bash(echo:*)",
-      "Bash(HOST=0.0.0.0 PORT=3000 npm run canvas:*)",
+      "Bash(HOST=0.0.0.0 PORT=3333 npm run canvas:*)",
       "Bash(git worktree remove:*)",
       "Bash(git worktree:*)",
       "mcp__notion__notion-fetch",
       "mcp__notion__notion-query-database-view",
-      "Bash(gcloud logging:*)"
+      "Bash(gcloud logging:*)",
+      "WebSearch",
+      "mcp__Linear__get_issue"
     ]
   }
 }

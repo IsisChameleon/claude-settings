@@ -922,6 +922,26 @@ find $WORKTREE_BASE -maxdepth 2 -type d
 4. Continue with other worktrees
 5. User can fix and re-validate manually
 
+### Cleanup `Permission denied` on directories that look empty (macOS + Docker)
+
+If `cleanup.sh` (or plain `rm -rf`) fails with `Permission denied` on a directory that:
+- `ls -la` reports as empty
+- is owned by your user
+- has normal `drwxr-xr-x` POSIX perms
+
+…it is almost certainly a Docker-for-Mac ACL, not a POSIX-permission problem. Docker Desktop's file-sharing layer (virtiofs / osxfs) stamps a `deny delete` ACL entry on bind-mount targets like `client/node_modules`. The ACL persists after `docker compose down`, after the Docker daemon exits, and possibly across reboots. Empirically it tends to bite when the worktree is deleted soon after the stack ran; older worktrees seem to clear it on their own (mechanism unconfirmed — could be background reaping, ACL TTL, or a Docker Desktop update).
+
+**Diagnose:** `ls -lae <path>` (the `e` flag shows ACLs). A `0: user:<you> deny delete` line confirms it.
+
+**Fix:** strip ACLs recursively, then remove:
+
+```bash
+chmod -RN <worktree-path>
+rm -rf <worktree-path>
+```
+
+**Don't** escalate to `sudo rm -rf`, `chown`, or `chflags` — none of them address the ACL and they add noise / risk.
+
 ---
 
 ## Example Session

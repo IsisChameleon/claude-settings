@@ -2,6 +2,24 @@
 
 This file provides general guidance to Claude Code (claude.ai/code).
 
+## Local Development
+
+- If a project has a docker compose stack (or equivalent), use it to start services. Do NOT start ad-hoc dev servers (`next dev`, `pnpm dev`, `uvicorn`, etc.) when the project's convention is to run via docker.
+- When testing a change that requires the stack to be up and the project has a local docker compose stack, always restart the docker stack after config changes rather than testing against running ports. The stack might otherwise be running against another worktree.
+- Before debugging build/lint failures, check for stale caches (`.next`, `node_modules`, `.svelte-kit`, `__pycache__`) and missing dev deps (e.g., vitest) before deep-diving into infrastructure (lefthook, pre-commit hooks, venv setup).
+
+## Investigation Discipline
+
+- Do not speculate about root causes. Add logs, read source, or check docs to verify a hypothesis BEFORE applying fixes.
+- Never run destructive commands (`git reset --hard`, force-push, `rm -rf`, worktree deletion) without explicitly proposing them first and waiting for approval.
+- When the user asks a direct question, answer it directly; do not launch exploratory bash commands or clarifying-question dialogues unless the question is truly ambiguous.
+
+## Git & PR Workflow
+
+- Never commit directly to `main`. Always create a feature branch first, even for small changes.
+- Before resolving merge conflicts, check whether `main` already contains the branch's changes (`git log main..HEAD`) and consider a fresh-branch cherry-pick instead of manual conflict resolution.
+- Keep wrap-up summaries brief; the user often has follow-up requests.
+
 ## System Environment
 
 - **Shell**: zsh (macOS default) - fish is NOT installed
@@ -81,18 +99,30 @@ Other repos may be referenced for **code patterns and information only** — rea
 
 This rule applies to: API keys, OAuth tokens, service-account JSON, database URLs with embedded passwords, webhook secrets, JWT signing keys, and any other form of credential.
 
+## Testing Discipline
+
+- **Mock at external boundaries, not at internal abstractions.** Mock the network client (Firestore, HTTP, Daily, S3), the filesystem, time/UUID generation, and LLM/AI calls. Do NOT mock our own data-access classes (`SomeRef.get`, `Repository.get`, service-layer methods) when testing the code that calls them — the production code path through your own abstractions must still execute, or bugs inside them go undetected. Use the project's `tests/fakes/` (or equivalent) for in-memory stand-ins that preserve real serialization/deserialization semantics.
+- **When adding a field to a model that round-trips through storage, extend the deserializer AND its test in the same change.** Pydantic-style defaults (usually `None`) silently hide a missing field in the deserializer — no validation error fires. The test must assert the new field round-trips through a snapshot/dict.
+- **Setter/getter pairs need a round-trip test through the production API**, not through dedicated single-field helpers. The bug-revealing test is: write via the prod setter into a fake store, read back via the prod getter (the API the rest of the code actually uses), and assert the values match.
+- **Trace the full data flow before claiming "done".** Read the code path from entry-point to final output — actor or route handler → data layer → consumers → rendered prompt or response body. Verify each layer actually uses the value the previous one produced; a single ignored field or default-to-empty mid-flow silently degrades the feature even when every unit test passes. For prompt/UI features, render the final output and inspect it. For data features, point to the write line, the read line, and every consumer that uses the deserialized value.
+- **Implicit defaults can mask missing wiring.** `field: str = ""` lets every caller silently produce a degraded result. Prefer required parameters or no-default fields when a value is essential to the feature; reserve defaults for cases where "empty" is a legitimate state, not a synonym for "I forgot."
+
+## Defensive Code — Earn the Raise
+
+Before adding a validator, assertion, `raise`, or guard, run this gate:
+
+1. **Cost:** does the check add code, branches, or failure modes the reader has to track? (Almost always yes.)
+2. **Benefit:** if the check is absent and the bad state occurs, does something *actually awful* happen — data corruption, security hole, silent wrong answer, crashed user flow? Or just a cosmetic glitch, a slightly weird log line, a degraded-but-correct output?
+3. **Likelihood:** how plausible is the bad state in practice given the producers? LLM structured output with a clear schema + clear prompt? Internal code paths with strong types? Very low likelihood lowers the benefit further.
+
+If **cost = yes** and **awful = no**, **do not add the check**. Let the value flow through; the system tolerates it.
+
+Validators on a model are especially expensive because they raise from anywhere the model is constructed — including deserialization on read. A single bad row poisons every read for that key. The blast radius is almost always wider than the bug it catches.
+
+If you are unsure whether the failure mode is awful, **ask** — don't default to defensive.
+
+This is the *spirit* of "no error handling for scenarios that can't happen" in the system prompt, restated: validate at real system boundaries (untrusted user input, external APIs); trust the inside.
+
 ## Quality Checks
 
-Always run quality checks before committing:
-
-**Frontend (SvelteKit)**:
-```bash
-cd client
-pnpm github-checks  # lint + test + types
-```
-
-**Backend (Python)**:
-```bash
-cd server
-ruff check && ruff format && pytest
-```
+Always run quality checks before committing, check repo specific quality checks.

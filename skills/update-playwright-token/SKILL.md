@@ -16,16 +16,18 @@ Updates the Playwright MCP browser extension token and restarts the MCP server.
 ## Steps
 
 1. Read the argument as the new token value
-2. Update the file `/Users/isabelleredactive/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/playwright/.mcp.json` — replace the existing token in the `args` array with the new one. The config structure is:
+2. Update the file `/Users/isabelleredactive/.claude/plugins/marketplaces/claude-plugins-official/external_plugins/playwright/.mcp.json` — set the new token under `env.PLAYWRIGHT_MCP_EXTENSION_TOKEN`. The token MUST be an environment variable; `@playwright/mcp` does not accept it as a CLI flag (there is no `--extension-token`). The CLI side just needs the bare `--extension` flag, otherwise the server spawns its own headless Chromium and ignores the bridge entirely. Correct shape:
    ```json
    {
      "playwright": {
        "command": "npx",
        "args": [
          "@playwright/mcp@latest",
-         "--extension-token",
-         "<TOKEN>"
-       ]
+         "--extension"
+       ],
+       "env": {
+         "PLAYWRIGHT_MCP_EXTENSION_TOKEN": "<TOKEN>"
+       }
      }
    }
    ```

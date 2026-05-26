@@ -1,0 +1,25 @@
+#!/usr/bin/env bash
+# PreToolUse hook: blocks `git commit` on main/master branch.
+# Allows --amend (rare but legitimate — e.g., amending the just-pulled HEAD).
+
+cmd=$(jq -r '.tool_input.command' 2>/dev/null)
+
+# Only act on commands that actually invoke `git commit`. Match at the start of
+# the command or after a shell separator (;, &&, ||, |, newline), so things
+# like `echo "git commit"` or `git log --grep='commit'` aren't blocked.
+if ! printf '%s' "$cmd" | grep -Eq '(^|[[:space:]]|;|&&|\|\||\|)git[[:space:]]+commit([[:space:]]|$)'; then
+  exit 0
+fi
+
+# Allow amends.
+case "$cmd" in
+  *--amend*) exit 0 ;;
+esac
+
+branch=$(git rev-parse --abbrev-ref HEAD 2>/dev/null)
+case "$branch" in
+  main|master)
+    printf '{"hookSpecificOutput":{"hookEventName":"PreToolUse","permissionDecision":"deny","permissionDecisionReason":"Refusing: on %s branch. Create a feature branch first (e.g., git checkout -b your/branch-name) before committing."}}' "$branch"
+    ;;
+esac
+exit 0

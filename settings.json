@@ -94,7 +94,20 @@
       "/Users/isabelleredactive/src/toocan-app/.claude/skills"
     ]
   },
-  "model": "sonnet",
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "/Users/isabelleredactive/.claude/hooks/block-commit-on-main.sh",
+            "if": "Bash(git commit*)"
+          }
+        ]
+      }
+    ]
+  },
   "statusLine": {
     "type": "command",
     "command": "/Users/isabelleredactive/.claude/statusline-command.sh"

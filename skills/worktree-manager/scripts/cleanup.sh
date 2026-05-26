@@ -139,6 +139,15 @@ else
 fi
 
 # Step 2: Remove worktree directory
+# Docker-for-Mac stamps `deny delete` ACLs on bind-mount targets (e.g. client/node_modules)
+# that survive `docker compose down` and block rm -rf. Strip ACLs first on macOS so the
+# subsequent rm doesn't die on a `Permission denied` from an ACL we just need to clear.
+strip_acls() {
+    if [ "$(uname)" = "Darwin" ] && [ -d "$1" ]; then
+        chmod -RN "$1" 2>/dev/null || true
+    fi
+}
+
 if [ -d "$WORKTREE_PATH" ]; then
     echo "Removing worktree directory: $WORKTREE_PATH"
 
@@ -147,10 +156,12 @@ if [ -d "$WORKTREE_PATH" ]; then
         cd "$REPO_PATH"
         git worktree remove "$WORKTREE_PATH" --force 2>/dev/null && echo "  Removed via git worktree" || {
             echo "  Git worktree remove failed, removing directory directly..."
+            strip_acls "$WORKTREE_PATH"
             rm -rf "$WORKTREE_PATH" && echo "  Removed directory"
         }
     else
         # Just remove the directory
+        strip_acls "$WORKTREE_PATH"
         rm -rf "$WORKTREE_PATH" && echo "  Removed directory"
     fi
 else
