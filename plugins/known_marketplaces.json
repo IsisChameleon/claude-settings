@@ -5,7 +5,7 @@
       "repo": "anthropics/claude-plugins-official"
     },
     "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/claude-plugins-official",
-    "lastUpdated": "2026-05-26T05:41:44.886Z"
+    "lastUpdated": "2026-06-02T07:25:06.708Z"
   },
   "pipecat-skills": {
     "source": {
@@ -29,7 +29,7 @@
       "repo": "anthropics/claude-code"
     },
     "installLocation": "/Users/isabelleredactive/.claude/plugins/marketplaces/claude-code-plugins",
-    "lastUpdated": "2026-05-26T05:41:44.699Z"
+    "lastUpdated": "2026-06-02T07:25:06.472Z"
   },
   "openai-codex": {
     "source": {
