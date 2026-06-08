@@ -54,6 +54,10 @@ mcp-needs-auth-cache.json
 # Transient update result
 .last-update-result.json
 
+# Machine-specific timestamp/path state
+.last-cleanup
+plugins/known_marketplaces.json
+
 # Plugin blocklist (fetched at runtime)
 plugins/blocklist.json
 telemetry/**/*
