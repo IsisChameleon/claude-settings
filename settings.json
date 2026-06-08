@@ -94,6 +94,7 @@
       "/Users/isabelleredactive/src/toocan-app/.claude/skills"
     ]
   },
+  "model": "opus",
   "hooks": {
     "PreToolUse": [
       {
@@ -140,5 +141,6 @@
       }
     }
   },
+  "skipWorkflowUsageWarning": true,
   "skipAutoPermissionPrompt": true
 }

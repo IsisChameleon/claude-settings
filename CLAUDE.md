@@ -11,8 +11,29 @@ This file provides general guidance to Claude Code (claude.ai/code).
 ## Investigation Discipline
 
 - Do not speculate about root causes. Add logs, read source, or check docs to verify a hypothesis BEFORE applying fixes.
+- Do not state guesses or hypothesis as fact. Work like a scientific. Identify and verify assumptions, using a test script, researching the documentation, providing references.
 - Never run destructive commands (`git reset --hard`, force-push, `rm -rf`, worktree deletion) without explicitly proposing them first and waiting for approval.
 - When the user asks a direct question, answer it directly; do not launch exploratory bash commands or clarifying-question dialogues unless the question is truly ambiguous.
+
+## Coding Discipline
+
+Bias toward caution over speed. For trivial tasks, use judgment — otherwise default to:
+
+- **Surface assumptions before coding.** If multiple interpretations of the request exist, present them — don't pick silently. If a simpler approach exists, say so and push back when warranted. If something is unclear, name what's confusing and ask. Don't hide confusion under code.
+- **Simplicity first — minimum code that solves the problem.** No features, abstractions, configurability, or error handling beyond what was asked. Single-use code doesn't need a generic interface. If you wrote 200 lines and it could be 50, rewrite it. Sanity check: "would a senior engineer say this is overcomplicated?"
+- **Surgical changes — every changed line should trace to the request.** Don't "improve" adjacent code, comments, or formatting. Don't refactor what isn't broken. Match existing style even if you'd write it differently. If you spot unrelated dead code, mention it — don't delete it. Only remove orphans (imports/vars/functions) that YOUR changes made unused.
+- **Define verifiable success before starting.** Convert vague asks into checkable goals:
+  - "Add validation" → write tests for invalid inputs, then make them pass.
+  - "Fix the bug" → write a test that reproduces it, then make it pass.
+  - "Refactor X" → ensure tests pass before AND after.
+
+  For multi-step tasks, state a brief plan with a verify step per item. Strong success criteria let you loop independently; weak ones ("make it work") require constant clarification.
+
+Source: Karpathy on common LLM coding pitfalls — https://x.com/karpathy/status/2015883857489522876
+
+## Reporting to the user
+
+Report the result of your coding or investigation to the user in plain english, with code snippets or doc extracts when required so that the user does not need to go and look the files /docs but still can follow your argument. Do not use unnecessary jargon. Like in a scientific paper, link your references (be in code paht+line or documentation links) using [1] etc.. in your response and adding the references links at the ned.
 
 ## Git & PR Workflow
 
@@ -41,6 +62,8 @@ Common rule files:
 - `typescript.mdc` - TypeScript/testing patterns
 
 ## Code Style Preferences
+
+Always adhere to the codebase patterns in the current repo. If it doesn't seem like the right choice for your task, just ASK the user - and if the user specifically asked not to be interrupted use your best judgment and surface the decision in your report to the user.
 
 ### General
 - Arrow functions ONLY: `const fn = () => {}`
