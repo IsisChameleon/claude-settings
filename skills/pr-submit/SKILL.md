@@ -25,4 +25,10 @@ Submit the current changes as a GitHub pull request.
    - Run `/changelog <pr_number>` to generate changelog files, then commit and push them
    - Run `/pr-description <pr_number>` to update the PR description
 
-5. Return the PR URL to the user.
+5. Verify CI checks pass:
+   - Run `gh pr checks <pr_number> --watch --interval 10` to wait for all checks to complete
+   - If any check fails, run `gh run view <run_id> --log-failed` to get the failure details
+   - Fix the failures, commit, and push — then re-run `gh pr checks <pr_number> --watch` to confirm green
+   - Do not report the PR as done until all checks pass
+
+6. Return the PR URL to the user.
