@@ -51,6 +51,9 @@ backups/
 # MCP auth cache
 mcp-needs-auth-cache.json
 
+# Server-pushed org policy cache (rewritten by the harness on each policy fetch)
+policy-limits.json
+
 # Transient update result
 .last-update-result.json
 
