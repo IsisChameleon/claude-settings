@@ -29,6 +29,8 @@ Bias toward caution over speed. For trivial tasks, use judgment — otherwise de
 
   For multi-step tasks, state a brief plan with a verify step per item. Strong success criteria let you loop independently; weak ones ("make it work") require constant clarification.
 
+- **Parallel flows are the bug factory — collapse them when you can.** When the same field or logic exists in sibling code paths (create/duplicate, web/SDK, multiple transports), first try extracting the shared piece so there is one place to change. If they must stay parallel: grep for the field before editing, and update every flow in the same change — per-flow tests cannot catch the drift, because each flow stays internally consistent.
+
 Source: Karpathy on common LLM coding pitfalls — https://x.com/karpathy/status/2015883857489522876
 
 ## Reporting to the user
@@ -97,6 +99,11 @@ if (!error) {
 ## Searching Past Conversations
 - Claude Code stores conversation history in `~/.claude/`. The main transcript log is `history.jsonl`, and per-project session transcripts (JSONL files) live under `projects/<encoded-project-path>/`. You can grep these files to find past conversations, tool calls, code snippets, or decisions from previous sessions.
 
+## Memory Location
+
+- Write global memories (rules, gotchas, requirements) to the top-level `~/.claude/memory/` directory — this is tracked in git. Do NOT write them to `projects/-Users-isabelleredactive--claude/memory/`; that path is under the gitignored `projects/` tree and will never be committed, even though the harness memory instructions point there.
+- The curated global memories and their `MEMORY.md` index live in `~/.claude/memory/`.
+
 ## Plan Mode
 
 When creating a plan, name the markdown file descriptively based on the task (e.g., `add-user-auth.md`, `fix-login-bug.md`, `refactor-api-routes.md`) instead of using a random generated name.
@@ -129,6 +136,21 @@ This rule applies to: API keys, OAuth tokens, service-account JSON, database URL
 - **Setter/getter pairs need a round-trip test through the production API**, not through dedicated single-field helpers. The bug-revealing test is: write via the prod setter into a fake store, read back via the prod getter (the API the rest of the code actually uses), and assert the values match.
 - **Trace the full data flow before claiming "done".** Read the code path from entry-point to final output — actor or route handler → data layer → consumers → rendered prompt or response body. Verify each layer actually uses the value the previous one produced; a single ignored field or default-to-empty mid-flow silently degrades the feature even when every unit test passes. For prompt/UI features, render the final output and inspect it. For data features, point to the write line, the read line, and every consumer that uses the deserialized value.
 - **Implicit defaults can mask missing wiring.** `field: str = ""` lets every caller silently produce a degraded result. Prefer required parameters or no-default fields when a value is essential to the feature; reserve defaults for cases where "empty" is a legitimate state, not a synonym for "I forgot."
+- **`mock.patch` targets where the name is used, not where it's defined.** `from pkg.utils import fn` copies the reference into the importing module; patching `pkg.utils.fn` rebinds the original but the copy still points at the real function — the patch applies without error and the real dependency keeps running. Patch the using module's attribute.
+- **Use `MagicMock(spec=Cls)` whenever production code runs `isinstance()` on the mocked object.** A bare `MagicMock` is an instance of nothing: the check returns False, production code silently takes the other branch, and the test passes while exercising a path the real object never takes.
+
+## Async Python
+
+- **A coroutine's body does not execute until awaited.** Calling an async function without `await` builds a coroutine object and discards it — nothing runs, no error, just a "never awaited" warning in logs nobody reads. With async SDK clients (Firestore `AsyncClient`, httpx), an un-awaited write silently doesn't happen.
+- **Never call synchronous network-bound functions inside `async def`.** The event loop runs every request on one thread — one blocking call freezes all in-flight requests, works fine in dev, and degrades the whole service under load. Use `await asyncio.to_thread(...)` or the async client.
+
+## API Boundaries (FastAPI/Pydantic)
+
+- **Declare typed params (`datetime`, enums) and let the framework parse — never accept `str` and parse by hand.** Hand-parsing turns malformed input into an unhandled exception → 500, where the declared type gives a 422 with a field-level message, and the type flows into the OpenAPI schema (and any generated client SDK).
+
+## Frontend A11y
+
+- **Animated show/hide keeps the element mounted — and focusable.** Elements hidden by CSS (`translate-x-full`, `opacity-0`) stay in the focus order and accessibility tree; Tab lands on invisible controls and screen readers announce them. Pair the hiding class with `inert={!visible}` driven by the same boolean.
 
 ## Defensive Code — Earn the Raise
 
