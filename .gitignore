@@ -31,6 +31,8 @@ plugins/marketplaces/
 plugins/install-counts-cache.json
 plugins/installed_plugins.json
 plugins/cache/
+plugins/plugin-catalog-cache.json
+plugins/.last_inuse_sweep
 
 # Logs and caches
 *.log
@@ -52,6 +54,7 @@ mcp-needs-auth-cache.json
 
 # Server-pushed org policy cache (rewritten by the harness on each policy fetch)
 policy-limits.json
+remote-settings.json
 
 # Transient update result
 .last-update-result.json
